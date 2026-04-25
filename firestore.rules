@@ -1,0 +1,145 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 0. Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Helpers ---
+    function isSignedIn() { return request.auth != null; }
+    function isOwner(userId) { return isSignedIn() && request.auth.uid == userId; }
+    function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+
+    // --- Entity Validations ---
+    function isValidUserPublic(data) {
+      return data.displayName is string && data.displayName.size() >= 2 && data.displayName.size() <= 50
+        && (data.photoURL == null || (data.photoURL is string && data.photoURL.size() <= 500))
+        && data.joinedAt == request.time
+        && data.keys().hasAll(['displayName', 'joinedAt']) && data.keys().size() <= 3;
+    }
+
+    function isValidUserPrivate(data) {
+      return data.email is string && data.email.size() <= 100
+        && (data.age == null || (data.age is int && data.age >= 0 && data.age <= 120))
+        && (data.weight == null || (data.weight is number && data.weight >= 0 && data.weight <= 500))
+        && (data.cycleLength == null || (data.cycleLength is int && data.cycleLength >= 10 && data.cycleLength <= 100))
+        && data.keys().hasAll(['email']) && data.keys().size() <= 4;
+    }
+
+    function isValidLog(data) {
+      return data.date is string && data.date.matches('^\\d{4}-\\d{2}-\\d{2}$')
+        && (data.mood == null || data.mood in ['happy', 'low', 'anxious', 'irritated'])
+        && (data.symptoms == null || (data.symptoms is list && data.symptoms.size() <= 20))
+        && (data.sleep == null || (data.sleep is int && data.sleep >= 0 && data.sleep <= 24))
+        && (data.water == null || (data.water is number && data.water >= 0 && data.water <= 20))
+        && (data.exercise == null || (data.exercise is number && data.exercise >= 0 && data.exercise <= 500))
+        && (data.periodStart == null || data.periodStart is bool)
+        && (data.periodEnd == null || data.periodEnd is bool)
+        && (data.notes == null || (data.notes is string && data.notes.size() <= 1000))
+        && data.keys().hasAll(['date', 'createdAt']);
+    }
+
+    function isValidAppointment(data) {
+      return data.userId == request.auth.uid
+        && data.doctorId is string
+        && data.doctorName is string
+        && data.specialty is string
+        && data.date is string && data.date.matches('^\\d{4}-\\d{2}-\\d{2}$')
+        && data.time is string
+        && data.status in ['pending', 'confirmed', 'cancelled']
+        && data.createdAt == request.time
+        && data.keys().hasAll(['userId', 'doctorId', 'doctorName', 'specialty', 'date', 'time', 'status', 'createdAt']);
+    }
+
+    function isValidPost(data) {
+      return data.title is string && data.title.size() <= 100
+        && data.content is string && data.content.size() <= 5000
+        && data.authorId == request.auth.uid
+        && data.authorName is string && data.authorName.size() <= 50
+        && data.isAnonymous is bool
+        && data.createdAt == request.time
+        && (data.likesCount == null || data.likesCount == 0)
+        && (data.tags == null || (data.tags is list && data.tags.size() <= 5))
+        && data.keys().hasAll(['title', 'content', 'authorId', 'authorName', 'isAnonymous', 'createdAt']);
+    }
+
+    function isValidComment(data) {
+      return data.content is string && data.content.size() <= 1000
+        && data.authorId == request.auth.uid
+        && data.authorName is string && data.authorName.size() <= 50
+        && data.createdAt == request.time
+        && data.keys().hasAll(['content', 'authorId', 'authorName', 'createdAt']);
+    }
+
+    // --- Match Groups ---
+
+    // Users
+    match /users/{userId} {
+      allow get: if isSignedIn();
+      allow create: if isOwner(userId) && isValidUserPublic(incoming());
+      allow update: if isOwner(userId) && isValidUserPublic(incoming()) 
+        && incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'photoURL']);
+
+      match /private/info {
+        allow get: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidUserPrivate(incoming());
+        allow update: if isOwner(userId) && isValidUserPrivate(incoming())
+          && incoming().diff(existing()).affectedKeys().hasOnly(['age', 'weight', 'cycleLength']);
+      }
+
+      match /logs/{logId} {
+        allow list, get: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidId(logId) && isValidLog(incoming())
+          && incoming().createdAt == request.time;
+        allow update: if isOwner(userId) && isValidLog(incoming())
+          && incoming().createdAt == existing().createdAt
+          && incoming().diff(existing()).affectedKeys().hasOnly(['mood', 'symptoms', 'sleep', 'water', 'exercise', 'periodStart', 'periodEnd', 'notes']);
+        allow delete: if isOwner(userId);
+      }
+    }
+
+    // Resources (Read-only for users)
+    match /resources/{resourceId} {
+      allow list, get: if isSignedIn();
+    }
+
+    // Community Posts
+    match /posts/{postId} {
+      allow list, get: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(postId) && isValidPost(incoming());
+      allow update: if isSignedIn() && (
+        // Author can update content
+        (isOwner(existing().authorId) && isValidPost(incoming()) && incoming().diff(existing()).affectedKeys().hasOnly(['title', 'content', 'isAnonymous', 'tags']))
+        || 
+        // Others can only like (simplified for now, ideally use a subcollection for likes)
+        (incoming().diff(existing()).affectedKeys().hasOnly(['likesCount']) && incoming().likesCount == existing().likesCount + 1)
+      );
+      allow delete: if isOwner(existing().authorId);
+
+      match /comments/{commentId} {
+        allow list, get: if isSignedIn();
+        allow create: if isSignedIn() && isValidId(commentId) && isValidComment(incoming()) && exists(/databases/$(database)/documents/posts/$(postId));
+        allow delete: if isOwner(existing().authorId);
+      }
+    }
+
+    // Doctors (System data - Read only for users)
+    match /doctors/{doctorId} {
+      allow list, get: if isSignedIn();
+    }
+
+    // Appointments
+    match /appointments/{appointmentId} {
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow get: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() && isValidAppointment(incoming());
+      allow update: if isSignedIn() && existing().userId == request.auth.uid 
+        && isValidAppointment(incoming())
+        && incoming().diff(existing()).affectedKeys().hasOnly(['status']);
+      allow delete: if isSignedIn() && existing().userId == request.auth.uid;
+    }
+  }
+}

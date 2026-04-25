@@ -1,0 +1,155 @@
+{
+  "entities": {
+    "UserPublic": {
+      "title": "Public User Profile",
+      "description": "Public-facing user information.",
+      "type": "object",
+      "properties": {
+        "displayName": { "type": "string", "description": "User's chosen display name" },
+        "photoURL": { "type": "string", "description": "Profile picture URL" },
+        "joinedAt": { "type": "string", "format": "date-time", "description": "Timestamp of account creation" }
+      },
+      "required": ["displayName", "joinedAt"]
+    },
+    "UserPrivate": {
+      "title": "Private User Data",
+      "description": "Sensitive user information and PII.",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "format": "email", "description": "User's email address" },
+        "age": { "type": "integer", "description": "User's age" },
+        "weight": { "type": "number", "description": "User's weight in kg" },
+        "cycleLength": { "type": "integer", "description": "Average menstrual cycle length in days" }
+      },
+      "required": ["email"]
+    },
+    "Log": {
+      "title": "Daily Health Log",
+      "description": "Daily input of symptoms, mood, and lifestyle.",
+      "type": "object",
+      "properties": {
+        "date": { "type": "string", "format": "date", "description": "The date this log refers to (YYYY-MM-DD)" },
+        "periodStart": { "type": "boolean", "description": "Whether period started on this day" },
+        "periodEnd": { "type": "boolean", "description": "Whether period ended on this day" },
+        "mood": { "type": "string", "enum": ["happy", "low", "anxious", "irritated"], "description": "User's mood" },
+        "symptoms": { 
+          "type": "array", 
+          "items": { "type": "string" }, 
+          "description": "List of experienced symptoms (e.g., acne, bloating, fatigue)" 
+        },
+        "sleep": { "type": "integer", "description": "Sleep hours" },
+        "water": { "type": "integer", "description": "Water intake in glasses" },
+        "exercise": { "type": "integer", "description": "Exercise duration in minutes" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server-side timestamp" }
+      },
+      "required": ["date", "createdAt"]
+    },
+    "Resource": {
+      "title": "Learning Resource",
+      "description": "Curated health article or resource.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "url": { "type": "string", "format": "uri" },
+        "source": { "type": "string", "description": "e.g., WHO, Healthline, Mayo Clinic" },
+        "category": { "type": "string" },
+        "imageUrl": { "type": "string", "format": "uri" }
+      },
+      "required": ["title", "url", "source"]
+    },
+    "Post": {
+      "title": "Community Post",
+      "description": "A discussion post in the community forum.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "authorId": { "type": "string" },
+        "authorName": { "type": "string" },
+        "isAnonymous": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "likesCount": { "type": "integer" },
+        "tags": { "type": "array", "items": { "type": "string" } }
+      },
+      "required": ["title", "content", "authorId", "createdAt"]
+    },
+    "Comment": {
+      "title": "Forum Comment",
+      "description": "A comment on a community post.",
+      "type": "object",
+      "properties": {
+        "content": { "type": "string" },
+        "authorId": { "type": "string" },
+        "authorName": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["content", "authorId", "createdAt"]
+    },
+    "Doctor": {
+      "title": "Medical Specialist",
+      "description": "Information about a specialist doctor.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "specialty": { "type": "string", "enum": ["Gynecology", "Nutrition", "Psychology"] },
+        "experience": { "type": "string" },
+        "rating": { "type": "number" },
+        "bio": { "type": "string" },
+        "imageUrl": { "type": "string", "format": "uri" },
+        "availability": { "type": "array", "items": { "type": "string" }, "description": "Weekly available time slots" }
+      },
+      "required": ["name", "specialty"]
+    },
+    "Appointment": {
+      "title": "Doctor Appointment",
+      "description": "Details of a booked consultation.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "doctorId": { "type": "string" },
+        "doctorName": { "type": "string" },
+        "specialty": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "time": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "confirmed", "cancelled"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "doctorId", "date", "time", "status", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserPublic",
+      "description": "Public profile of a user."
+    },
+    "/doctors/{doctorId}": {
+      "schema": "Doctor",
+      "description": "Directory of medical professionals."
+    },
+    "/appointments/{appointmentId}": {
+      "schema": "Appointment",
+      "description": "Booked appointments across all users."
+    },
+    "/users/{userId}/private/info": {
+      "schema": "UserPrivate",
+      "description": "Private health data and PII."
+    },
+    "/users/{userId}/logs/{logId}": {
+      "schema": "Log",
+      "description": "Daily tracking logs for a specific user."
+    },
+    "/resources/{resourceId}": {
+      "schema": "Resource",
+      "description": "Curated medical and wellness articles."
+    },
+    "/posts/{postId}": {
+      "schema": "Post",
+      "description": "Community discussion posts."
+    },
+    "/posts/{postId}/comments/{commentId}": {
+      "schema": "Comment",
+      "description": "Comments on a forum post."
+    }
+  }
+}
