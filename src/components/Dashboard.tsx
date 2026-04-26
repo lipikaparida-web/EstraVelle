@@ -34,8 +34,8 @@ export default function Dashboard() {
       if (user) {
         const data = await getLogs(user.uid);
         const sortedLogs = [...data].sort((a, b) => b.date.localeCompare(a.date));
-        setLogs(sortedLogs.reverse()); 
-        
+        setLogs(sortedLogs.reverse());
+
         // Find most recent period start
         const latestPeriodStart = sortedLogs.find(l => l.periodStart);
         if (latestPeriodStart) {
@@ -77,10 +77,10 @@ export default function Dashboard() {
     const length = cycleLength || 28;
     const ovulationDay = Math.max(14, length - 14);
 
-    if (day <= 5) return { 
+    if (day <= 5) return {
       id: 'menstrual',
-      name: t('phases.menstrual'), 
-      color: 'text-rose-500', 
+      name: t('phases.menstrual'),
+      color: 'text-rose-500',
       bgColor: 'bg-rose-50',
       borderColor: 'border-rose-100',
       gradient: 'from-rose-400 to-rose-600',
@@ -94,10 +94,10 @@ export default function Dashboard() {
         { type: 'movement', icon: <Activity size={14} />, title: 'Gentle Care', content: 'Focus on very gentle movement like stretching or slow walks.' }
       ]
     };
-    if (day < ovulationDay) return { 
+    if (day < ovulationDay) return {
       id: 'follicular',
-      name: t('phases.follicular'), 
-      color: 'text-emerald-500', 
+      name: t('phases.follicular'),
+      color: 'text-emerald-500',
       bgColor: 'bg-emerald-50',
       borderColor: 'border-emerald-100',
       gradient: 'from-emerald-400 to-emerald-600',
@@ -111,10 +111,10 @@ export default function Dashboard() {
         { type: 'movement', icon: <Activity size={14} />, title: 'Energy', content: 'Light cardio and strength training feel particularly good now.' }
       ]
     };
-    if (day >= ovulationDay && day <= ovulationDay + 2) return { 
+    if (day >= ovulationDay && day <= ovulationDay + 2) return {
       id: 'ovulation',
-      name: t('phases.ovulation'), 
-      color: 'text-amber-500', 
+      name: t('phases.ovulation'),
+      color: 'text-amber-500',
       bgColor: 'bg-amber-50',
       borderColor: 'border-amber-100',
       gradient: 'from-amber-400 to-amber-600',
@@ -128,10 +128,10 @@ export default function Dashboard() {
         { type: 'movement', icon: <Activity size={14} />, title: 'Power', content: 'Peak energy window! Test your limits with HIIT or power yoga.' }
       ]
     };
-    return { 
+    return {
       id: 'luteal',
-      name: t('phases.luteal'), 
-      color: 'text-indigo-500', 
+      name: t('phases.luteal'),
+      color: 'text-indigo-500',
       bgColor: 'bg-indigo-50',
       borderColor: 'border-indigo-100',
       gradient: 'from-indigo-400 to-indigo-600',
@@ -150,7 +150,7 @@ export default function Dashboard() {
   const phase = getPhaseInfo();
 
   const moodScore = { happy: 4, low: 1, anxious: 2, irritated: 2 };
-  
+
   const filteredLogs = logs.filter(l => {
     const logDate = parseISO(l.date);
     if (timeRange === 'week') return isAfter(logDate, subDays(new Date(), 7));
@@ -178,13 +178,13 @@ export default function Dashboard() {
   }).filter(d => d.count > 0).sort((a, b) => b.count - a.count);
   const correlationData = symptomsList.map(symptom => {
     const symptomDays = logs.filter(l => l.symptoms?.includes(symptom));
-    const avgSleep = symptomDays.length > 0 
-      ? symptomDays.reduce((acc, l) => acc + (l.sleep || 0), 0) / symptomDays.length 
+    const avgSleep = symptomDays.length > 0
+      ? symptomDays.reduce((acc, l) => acc + (l.sleep || 0), 0) / symptomDays.length
       : 0;
-    const avgWater = symptomDays.length > 0 
-      ? symptomDays.reduce((acc, l) => acc + (l.water || 0), 0) / symptomDays.length 
+    const avgWater = symptomDays.length > 0
+      ? symptomDays.reduce((acc, l) => acc + (l.water || 0), 0) / symptomDays.length
       : 0;
-    
+
     return { symptom, avgSleep, avgWater, count: symptomDays.length };
   }).sort((a, b) => b.count - a.count).slice(0, 5);
 
@@ -207,7 +207,7 @@ export default function Dashboard() {
           <h2 className="text-4xl font-serif font-bold text-slate-700 dark:text-slate-200">{t('dashboard.title')}, {user?.displayName?.split(' ')[0]}.</h2>
           <div className="mt-4 flex flex-col sm:flex-row sm:items-center gap-6">
             <p className="text-slate-500 dark:text-slate-400 max-w-sm">{t('dashboard.subtitle')} 💜</p>
-            
+
             {/* Weekly Progress Bar */}
             <div className="flex-1 max-w-[240px] space-y-2">
               <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-slate-400">
@@ -215,7 +215,7 @@ export default function Dashboard() {
                 <span className="text-cura-purple">{logsThisWeekCount}/7 Logs</span>
               </div>
               <div className="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden border border-slate-200/50 dark:border-slate-700/50">
-                <motion.div 
+                <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${weeklyProgress}%` }}
                   transition={{ duration: 1, ease: "easeOut" }}
@@ -240,7 +240,7 @@ export default function Dashboard() {
 
       {/* Quick Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard icon={<Droplets className="text-red-400" />} label="Last Period" value={logs.filter(l => l.periodStart).length > 0 ? format(parseISO(logs.filter(l => l.periodStart).sort((a,b) => b.date.localeCompare(a.date))[0].date), 'MMM d') : 'No data'} />
+        <StatCard icon={<Droplets className="text-red-400" />} label="Last Period" value={logs.filter(l => l.periodStart).length > 0 ? format(parseISO(logs.filter(l => l.periodStart).sort((a, b) => b.date.localeCompare(a.date))[0].date), 'MMM d') : 'No data'} />
         <StatCard icon={<Calendar size={18} className="text-cura-purple" />} label={t('dashboard.next_period')} value={predictedNextPeriod ? format(predictedNextPeriod, 'MMM d') : 'Predicting...'} />
         <StatCard icon={<Activity className="text-pink-400" />} label="Avg Cycle" value={cycleLength ? `${cycleLength} ${t('dashboard.days')}` : 'Calculating...'} />
         <StatCard icon={<Sparkles className="text-amber-400" />} label="Ovulation" value={predictedOvulation ? format(predictedOvulation, 'MMM d') : 'Predicting...'} />
@@ -263,8 +263,8 @@ export default function Dashboard() {
                     onClick={() => setTimeRange(range)}
                     className={cn(
                       "px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all",
-                      timeRange === range 
-                        ? "bg-white dark:bg-slate-700 text-serenity-purple shadow-sm" 
+                      timeRange === range
+                        ? "bg-white dark:bg-slate-700 text-serenity-purple shadow-sm"
                         : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
                     )}
                   >
@@ -278,13 +278,13 @@ export default function Dashboard() {
                 <AreaChart data={chartData}>
                   <defs>
                     <linearGradient id="colorMood" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#FC8B5D" stopOpacity={0.8}/>
-                      <stop offset="95%" stopColor="#FC8B5D" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="#FC8B5D" stopOpacity={0.8} />
+                      <stop offset="95%" stopColor="#FC8B5D" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
                   <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#94a3b8', fontWeight: 600 }} dy={10} />
-                  <Tooltip 
+                  <Tooltip
                     content={({ active, payload }) => {
                       if (active && payload && payload.length) {
                         const data = payload[0].payload;
@@ -330,22 +330,22 @@ export default function Dashboard() {
               <p className="text-sm text-slate-400 dark:text-slate-500">Most commonly experienced symptoms in this period</p>
             </div>
           </div>
-          
+
           <div className="h-[300px] w-full">
             {symptomFrequencyData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={symptomFrequencyData} layout="vertical" margin={{ left: 20, right: 30 }}>
                   <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#f0f0f0" />
                   <XAxis type="number" hide />
-                  <YAxis 
-                    dataKey="symptom" 
-                    type="category" 
-                    axisLine={false} 
-                    tickLine={false} 
+                  <YAxis
+                    dataKey="symptom"
+                    type="category"
+                    axisLine={false}
+                    tickLine={false}
                     tick={{ fontSize: 11, fill: '#64748b', fontWeight: 600 }}
                     width={100}
                   />
-                  <Tooltip 
+                  <Tooltip
                     cursor={{ fill: 'transparent' }}
                     content={({ active, payload }) => {
                       if (active && payload && payload.length) {
@@ -362,9 +362,9 @@ export default function Dashboard() {
                   />
                   <Bar dataKey="count" radius={[0, 10, 10, 0]} barSize={20}>
                     {symptomFrequencyData.map((entry, index) => (
-                      <Cell 
-                        key={`cell-${index}`} 
-                        fill={['#FC8B5D', '#9381FF', '#FFB7C5', '#7FBDD2', '#C689C6'][index % 5]} 
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={['#FC8B5D', '#9381FF', '#FFB7C5', '#7FBDD2', '#C689C6'][index % 5]}
                       />
                     ))}
                   </Bar>
@@ -387,7 +387,7 @@ export default function Dashboard() {
               phase.gradient
             )}>
               <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl animate-pulse"></div>
-              
+
               <div className="relative">
                 <div className="flex justify-between items-start mb-2">
                   <h4 className="text-xs uppercase tracking-widest font-bold opacity-70">Cycle Status</h4>
@@ -406,7 +406,7 @@ export default function Dashboard() {
 
               <div className="relative space-y-4">
                 <div className="w-full h-3 bg-black/10 rounded-full overflow-hidden backdrop-blur-md border border-white/10">
-                  <motion.div 
+                  <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${phase.progress}%` }}
                     transition={{ duration: 1.5, ease: "circOut" }}
@@ -421,59 +421,59 @@ export default function Dashboard() {
 
             <div className="p-6 space-y-6">
               <div className="flex bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl w-full justify-between gap-1 mb-8">
-              {[
-                { id: 'menstrual', icon: <Droplets size={14} />, color: 'text-rose-500', bgColor: 'bg-rose-50' },
-                { id: 'follicular', icon: <Sparkles size={14} />, color: 'text-emerald-500', bgColor: 'bg-emerald-50' },
-                { id: 'ovulation', icon: <Activity size={14} />, color: 'text-amber-500', bgColor: 'bg-amber-50' },
-                { id: 'luteal', icon: <Moon size={14} />, color: 'text-indigo-500', bgColor: 'bg-indigo-50' }
-              ].map((p) => (
-                <div 
-                  key={p.id}
-                  className={cn(
-                    "flex-1 flex items-center justify-center gap-2 py-2 rounded-xl transition-all duration-500 border",
-                    phase.id === p.id 
-                      ? `${p.bgColor} ${p.color} border-${p.id === 'menstrual' ? 'rose' : p.id === 'follicular' ? 'emerald' : p.id === 'ovulation' ? 'amber' : 'indigo'}-200 shadow-sm scale-105 z-10` 
-                      : "bg-transparent text-slate-300 border-transparent saturate-0 opacity-50"
-                  )}
-                >
-                  {p.icon}
-                  <span className="text-[10px] font-bold uppercase tracking-wider hidden sm:block">
-                    {p.id}
-                  </span>
-                </div>
-              ))}
-            </div>
-
-            <div className="grid grid-cols-1 gap-4">
-              {phase.tips.map((tip, idx) => (
-                <motion.div 
-                  key={idx}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.5 + idx * 0.1 }}
-                  className="space-y-1.5 p-5 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800 group/tip hover:bg-white dark:hover:bg-slate-800 transition-all shadow-sm hover:shadow-md"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className={cn(
-                      "p-2 rounded-lg transition-transform group-hover/tip:scale-110",
-                      tip.type === 'emotional' ? 'bg-blue-100 text-blue-500' :
-                      tip.type === 'physical' ? 'bg-rose-100 text-rose-500' :
-                      'bg-emerald-100 text-emerald-500'
-                    )}>
-                      {tip.icon}
-                    </div>
-                    <span className="text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-widest">
-                      {tip.title}
+                {[
+                  { id: 'menstrual', icon: <Droplets size={14} />, color: 'text-rose-500', bgColor: 'bg-rose-50' },
+                  { id: 'follicular', icon: <Sparkles size={14} />, color: 'text-emerald-500', bgColor: 'bg-emerald-50' },
+                  { id: 'ovulation', icon: <Activity size={14} />, color: 'text-amber-500', bgColor: 'bg-amber-50' },
+                  { id: 'luteal', icon: <Moon size={14} />, color: 'text-indigo-500', bgColor: 'bg-indigo-50' }
+                ].map((p) => (
+                  <div
+                    key={p.id}
+                    className={cn(
+                      "flex-1 flex items-center justify-center gap-2 py-2 rounded-xl transition-all duration-500 border",
+                      phase.id === p.id
+                        ? `${p.bgColor} ${p.color} border-${p.id === 'menstrual' ? 'rose' : p.id === 'follicular' ? 'emerald' : p.id === 'ovulation' ? 'amber' : 'indigo'}-200 shadow-sm scale-105 z-10`
+                        : "bg-transparent text-slate-300 border-transparent saturate-0 opacity-50"
+                    )}
+                  >
+                    {p.icon}
+                    <span className="text-[10px] font-bold uppercase tracking-wider hidden sm:block">
+                      {p.id}
                     </span>
                   </div>
-                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed italic pl-11">
-                    {tip.content}
-                  </p>
-                </motion.div>
-              ))}
-            </div>
+                ))}
+              </div>
 
-              <Link 
+              <div className="grid grid-cols-1 gap-4">
+                {phase.tips.map((tip, idx) => (
+                  <motion.div
+                    key={idx}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.5 + idx * 0.1 }}
+                    className="space-y-1.5 p-5 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800 group/tip hover:bg-white dark:hover:bg-slate-800 transition-all shadow-sm hover:shadow-md"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={cn(
+                        "p-2 rounded-lg transition-transform group-hover/tip:scale-110",
+                        tip.type === 'emotional' ? 'bg-blue-100 text-blue-500' :
+                          tip.type === 'physical' ? 'bg-rose-100 text-rose-500' :
+                            'bg-emerald-100 text-emerald-500'
+                      )}>
+                        {tip.icon}
+                      </div>
+                      <span className="text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-widest">
+                        {tip.title}
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed italic pl-11">
+                      {tip.content}
+                    </p>
+                  </motion.div>
+                ))}
+              </div>
+
+              <Link
                 to="/wellness"
                 className="flex items-center justify-between w-full p-4 bg-lavender/10 hover:bg-lavender/20 dark:bg-slate-800 dark:hover:bg-slate-700 border border-lavender/20 dark:border-slate-700 rounded-2xl transition-all group"
               >
@@ -523,8 +523,8 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
           {correlationData.length > 0 ? (
             correlationData.map((data, i) => (
-              <div 
-                key={data.symptom} 
+              <div
+                key={data.symptom}
                 className="p-5 rounded-3xl bg-warm-beige/10 dark:bg-slate-950/40 border border-transparent hover:border-soft-pink/30 transition-all group"
               >
                 <div className="flex items-center justify-between mb-4">
@@ -540,7 +540,7 @@ export default function Dashboard() {
                       <span className={cn(data.avgSleep < 7 ? "text-red-400" : "text-indigo-400")}>{data.avgSleep.toFixed(1)}h</span>
                     </div>
                     <div className="w-full h-1.5 bg-white/50 rounded-full overflow-hidden">
-                      <div className="h-full bg-indigo-400/60 rounded-full" style={{ width: `${Math.min((data.avgSleep/10)*100, 100)}%` }}></div>
+                      <div className="h-full bg-indigo-400/60 rounded-full" style={{ width: `${Math.min((data.avgSleep / 10) * 100, 100)}%` }}></div>
                     </div>
                   </div>
                   <div className="space-y-1">
@@ -549,7 +549,7 @@ export default function Dashboard() {
                       <span className={cn(data.avgWater < 6 ? "text-orange-400" : "text-blue-400")}>{data.avgWater.toFixed(1)}g</span>
                     </div>
                     <div className="w-full h-1.5 bg-white/50 rounded-full overflow-hidden">
-                      <div className="h-full bg-blue-400/60 rounded-full" style={{ width: `${Math.min((data.avgWater/15)*100, 100)}%` }}></div>
+                      <div className="h-full bg-blue-400/60 rounded-full" style={{ width: `${Math.min((data.avgWater / 15) * 100, 100)}%` }}></div>
                     </div>
                   </div>
                 </div>

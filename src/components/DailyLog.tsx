@@ -61,8 +61,8 @@ export default function DailyLog() {
       return;
     }
     const dateStr = format(selectedDate, 'yyyy-MM-dd');
-    
-    // Create log object without undefined value
+
+    // 1. Keep the original UI save intact so the visual Calendar works perfectly
     const logData: any = {
       date: dateStr,
       symptoms: selectedSymptoms,
@@ -71,18 +71,39 @@ export default function DailyLog() {
       periodStart,
       periodEnd
     };
-    
-    if (mood) {
-      logData.mood = mood;
+    if (mood) logData.mood = mood;
+    await saveLog(user.uid, logData);
+
+    // 2. 🧠 THE ML BRIDGE: Send data to your Python Intelligence Engine
+    const mlPayload = {
+      uid: user.uid,
+      mood: mood || "Neutral",
+      symptoms: selectedSymptoms,
+      flow: periodStart ? "Medium" : "None", // Defaulting flow based on start
+      is_start: periodStart,
+      // Sneaking the extra UI data into the notes field for the backend to store!
+      notes: `Sleep: ${sleep}h, Water: ${water} glasses`
+    };
+
+    try {
+      const response = await fetch('http://localhost:8000/api/log', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(mlPayload)
+      });
+
+      const mlResult = await response.json();
+      console.log("🧠 ML Prediction Status:", mlResult);
+    } catch (error) {
+      console.error("ML Backend is currently offline:", error);
     }
-    
-    await saveLog(auth.currentUser.uid, logData);
+
     fetchLogs();
     setIsLogging(false);
   };
 
   const toggleSymptom = (s: string) => {
-    setSelectedSymptoms(prev => 
+    setSelectedSymptoms(prev =>
       prev.includes(s) ? prev.filter(i => i !== s) : [...prev, s]
     );
   };
@@ -170,8 +191,8 @@ export default function DailyLog() {
                       onClick={() => setMood(m.type)}
                       className={cn(
                         "p-4 rounded-3xl flex flex-col items-center border-2 transition-all relative overflow-hidden group",
-                        mood === m.type 
-                          ? cn("border-cura-purple scale-105 shadow-lg shadow-purple-100", m.color.split(' ')[0]) 
+                        mood === m.type
+                          ? cn("border-cura-purple scale-105 shadow-lg shadow-purple-100", m.color.split(' ')[0])
                           : "border-transparent bg-white/50 grayscale opacity-60 hover:grayscale-0 hover:opacity-100 hover:bg-white/80"
                       )}
                     >
@@ -180,9 +201,9 @@ export default function DailyLog() {
                         "text-[10px] font-bold uppercase tracking-widest transition-colors",
                         mood === m.type ? m.color.split(' ')[1] : "text-gray-400"
                       )}>{m.label}</span>
-                      
+
                       {mood === m.type && (
-                        <motion.div 
+                        <motion.div
                           layoutId="active-mood-indicator"
                           className="absolute bottom-1 w-1 h-1 rounded-full bg-cura-purple"
                         />
@@ -202,8 +223,8 @@ export default function DailyLog() {
                       onClick={() => toggleSymptom(s)}
                       className={cn(
                         "px-4 py-2 rounded-xl text-sm font-medium transition-all",
-                        selectedSymptoms.includes(s) 
-                          ? "bg-cura-purple text-white shadow-md shadow-purple-100" 
+                        selectedSymptoms.includes(s)
+                          ? "bg-cura-purple text-white shadow-md shadow-purple-100"
                           : "bg-white hover:bg-gray-50 text-gray-600 border border-gray-100"
                       )}
                     >
@@ -222,8 +243,8 @@ export default function DailyLog() {
                     </label>
                     <span className="text-cura-purple font-bold font-serif">{sleep}h</span>
                   </div>
-                  <input 
-                    type="range" min="0" max="15" value={sleep} 
+                  <input
+                    type="range" min="0" max="15" value={sleep}
                     onChange={(e) => setSleep(parseInt(e.target.value))}
                     className="w-full accent-cura-purple h-2 bg-white rounded-lg appearance-none cursor-pointer"
                   />
@@ -236,8 +257,8 @@ export default function DailyLog() {
                     </label>
                     <span className="text-cura-purple font-bold font-serif">{water} glasses</span>
                   </div>
-                  <input 
-                    type="range" min="0" max="20" value={water} 
+                  <input
+                    type="range" min="0" max="20" value={water}
                     onChange={(e) => setWater(parseInt(e.target.value))}
                     className="w-full accent-cura-purple h-2 bg-white rounded-lg appearance-none cursor-pointer"
                   />
@@ -245,7 +266,7 @@ export default function DailyLog() {
               </div>
 
               {/* Actions */}
-              <button 
+              <button
                 onClick={handleSave}
                 className="w-full bg-cura-purple text-white py-4 rounded-2xl font-bold shadow-lg shadow-purple-200 flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all"
               >
@@ -261,7 +282,7 @@ export default function DailyLog() {
               <h4 className="text-sm font-bold text-gray-700">Period Tracking</h4>
               <p className="text-xs text-gray-500">Track your bleeding days for accuracy.</p>
             </div>
-            <button 
+            <button
               onClick={() => setPeriodStart(!periodStart)}
               className={cn(
                 "p-2 rounded-xl transition-all",

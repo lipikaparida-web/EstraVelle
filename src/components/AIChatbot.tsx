@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Send, Sparkles, User, Bot, AlertCircle, RefreshCcw, Maximize2, X, ChevronRight } from 'lucide-react';
-import { chatWithAI } from '../services/geminiService';
+import { useAuth } from '../context/AuthContext';
 import { cn } from '../lib/utils';
 import Markdown from 'react-markdown';
 
@@ -13,6 +13,7 @@ interface Message {
 }
 
 export default function AIChatbot() {
+  const { user } = useAuth();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -49,26 +50,34 @@ export default function AIChatbot() {
     setIsLoading(true);
 
     try {
-      const history = messages.map(m => ({
-        role: m.role,
-        parts: [{ text: m.text }]
-      }));
+      // 🧠 THE ML BRIDGE: Calling your Python FastAPI Assistant
+      const response = await fetch('http://localhost:8000/api/assistant', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          uid: user?.uid || "guest_user",
+          message: userMessage.text
+        })
+      });
 
-      const responseText = await chatWithAI(userMessage.text, history);
-      
+      if (!response.ok) throw new Error("Backend connection failed");
+
+      const data = await response.json();
+
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'model',
-        text: responseText,
+        text: data.reply,
         timestamp: new Date()
       };
 
       setMessages(prev => [...prev, botMessage]);
     } catch (error) {
+      console.error("AI Bridge Error:", error);
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'model',
-        text: "I'm so sorry, I encountered a little hiccup. Could you please try again? 💜",
+        text: "I'm having trouble connecting to my brain. Please make sure your Python server is running on port 8000! 💜",
         timestamp: new Date()
       };
       setMessages(prev => [...prev, errorMessage]);
@@ -84,7 +93,7 @@ export default function AIChatbot() {
           <h2 className="text-3xl md:text-5xl font-serif font-bold text-slate-700 italic">Ask EstraVelle</h2>
           <p className="text-slate-500 mt-1 italic text-base md:text-lg">A safe, empathetic space for your health & hormonal well-being. ✨</p>
         </div>
-        <button 
+        <button
           onClick={() => setMessages([messages[0]])}
           className="p-3 md:p-4 text-slate-400 hover:text-serenity-purple hover:bg-white rounded-2xl transition-all border border-transparent hover:border-soft-pink/20 shadow-sm"
           title="Reset conversation"
@@ -119,14 +128,14 @@ export default function AIChatbot() {
                 )}>
                   <div className={cn(
                     "p-4 md:p-8 rounded-[1.5rem] md:rounded-[2.5rem] text-sm md:text-base leading-relaxed shadow-md transition-all group-hover:shadow-lg",
-                    message.role === 'user' 
-                      ? "bg-serenity-purple text-white rounded-tr-none" 
+                    message.role === 'user'
+                      ? "bg-serenity-purple text-white rounded-tr-none"
                       : "bg-white text-slate-700 rounded-tl-none border border-soft-pink/5"
                   )}>
                     <div className="prose prose-slate prose-sm md:prose-base max-w-none prose-p:leading-relaxed prose-headings:font-serif prose-headings:italic prose-p:text-current">
                       <Markdown>{message.text}</Markdown>
                     </div>
-                    
+
                     <div className={cn(
                       "flex items-center justify-between mt-4 md:mt-6 gap-6",
                       message.role === 'user' ? "text-white/60" : "text-slate-400"
@@ -135,7 +144,7 @@ export default function AIChatbot() {
                         {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </span>
                       {message.role === 'model' && message.text.length > 200 && (
-                        <button 
+                        <button
                           onClick={() => setExpandedMessage(message)}
                           className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest hover:text-serenity-purple transition-colors bg-slate-50/50 px-3 py-1 rounded-full border border-soft-pink/10"
                         >
@@ -150,9 +159,9 @@ export default function AIChatbot() {
             ))}
           </AnimatePresence>
           {isLoading && (
-            <motion.div 
-              initial={{ opacity: 0 }} 
-              animate={{ opacity: 1 }} 
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               className="flex items-center gap-3 text-slate-400 italic text-sm ml-12 md:ml-16"
             >
               <div className="flex gap-1.5 p-2 bg-white rounded-full border border-soft-pink/10 shadow-sm">
@@ -202,7 +211,7 @@ export default function AIChatbot() {
       <AnimatePresence>
         {expandedMessage && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-8">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -216,7 +225,7 @@ export default function AIChatbot() {
               className="relative w-full max-w-4xl max-h-[85vh] bg-white rounded-[3rem] shadow-2xl overflow-hidden flex flex-col border border-lavender/20"
             >
               <div className="absolute top-6 right-6 z-10">
-                <button 
+                <button
                   onClick={() => setExpandedMessage(null)}
                   className="p-3 bg-slate-50 hover:bg-slate-100 text-slate-400 hover:text-slate-600 rounded-full transition-all shadow-sm"
                 >
@@ -238,7 +247,7 @@ export default function AIChatbot() {
                 <div className="prose prose-lg max-w-none prose-slate prose-p:leading-relaxed prose-headings:font-serif prose-headings:italic prose-headings:text-slate-700">
                   <Markdown>{expandedMessage.text}</Markdown>
                 </div>
-                
+
                 <div className="mt-12 pt-8 border-t border-slate-100 flex items-center justify-between">
                   <div className="flex items-center gap-2 text-slate-400 text-sm">
                     <Sparkles size={14} className="text-lavender" />
