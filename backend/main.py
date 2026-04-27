@@ -25,7 +25,7 @@ app.add_middleware(
 # --- CONFIGURATION & ERROR CATCHING ---
 try:
     genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-    ai_model = genai.GenerativeModel('gemini-pro')
+    ai_model = genai.GenerativeModel('gemini-1.5-flash')
     supabase: Client = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
 except Exception as e:
     print(f"CRITICAL ERROR: Please check your .env keys. Details: {e}")
@@ -78,15 +78,19 @@ async def root():
 async def wellness_guide(data: UserMessage):
     print(f"DEBUG: Received message from {data.uid}: {data.message}")
     try:
-        # --- SMARTER WIZARD OF OZ MODE FOR PANEL DEMO ---
-        user_msg = data.message.lower()
+        # --- REAL AI INTEGRATION ---
+        prompt = f"""You are "EstraVelle", a warm, empathetic virtual assistant doctor and health companion for women. You combine clinical knowledge with the heart of a supportive health coach. You specialize in hormonal health, PCOD/PCOS, and cycle-syncing.
+Your Tone: Warm, patient, and reassuring with a clinical backbone. Non-judgmental. End with a grounding message of hope or a question about their well-being. Do not use markdown headers, just plain text with emojis.
+
+User message: {data.message}"""
         
-        if "energy" in user_msg or "low" in user_msg or "tired" in user_msg:
-            bot_text = "Low energy is completely normal right now. Your body is working hard! Try to prioritize rest today, maybe take a short nap if you can, and eat some iron-rich foods like spinach or lentils. Be gentle with yourself. 💜"
-        elif "bloat" in user_msg:
-            bot_text = "I'm so glad you shared that with me. Bloating is incredibly common, especially depending on where you are in your cycle. Make sure you are drinking plenty of water, and perhaps try some gentle stretching or peppermint tea. How are your energy levels today? 🌿"
-        else:
-            bot_text = "Thank you for sharing that with me. I'm noting this down in your daily log. Remember, listening to your body is the most important thing you can do right now. Is there anything else you want to talk about? ✨"
+        try:
+            response = ai_model.generate_content(prompt)
+            bot_text = response.text
+        except Exception as ai_err:
+            print(f"Gemini API Error: {ai_err}")
+            bot_text = "I'm having a little trouble connecting to my brain right now. Remember to listen to your body and rest if you need to! 💜"
+
         
         # Save to Supabase
         supabase.table("chat_history").insert({
