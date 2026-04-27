@@ -1,16 +1,16 @@
-import { 
-  collection, 
-  doc, 
-  getDoc, 
-  getDocs, 
-  setDoc, 
-  updateDoc, 
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  setDoc,
+  updateDoc,
   addDoc,
-  deleteDoc, 
-  query, 
-  where, 
-  orderBy, 
-  limit, 
+  deleteDoc,
+  query,
+  where,
+  orderBy,
+  limit,
   serverTimestamp,
   type DocumentData
 } from 'firebase/firestore';
@@ -19,6 +19,39 @@ import { HealthLog, Post, Comment, Resource, UserProfile, UserPrivateData, Appoi
 import { getGuestLogs, getGuestPosts } from './guestData';
 
 const isGuestId = (uid: string) => uid.startsWith('guest_') || (auth.currentUser?.isAnonymous);
+
+// --- BACKEND BRIDGE CONFIGURATION ---
+const API_BASE_URL = 'http://localhost:8000';
+
+/**
+ * Sends health data to the Python Backend for PCOD Risk Analysis
+ */
+async function triggerBackendAnalysis(userId: string, log: any) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/log`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        user_id: userId,
+        date: log.date,
+        symptoms: log.symptoms || [],
+        cycle_length: log.cycle_length || 0,
+        mood: log.mood || 'neutral',
+        flow: log.flow || 'medium'
+      }),
+    });
+
+    if (response.ok) {
+      console.log('✅ PCOD Analysis successfully triggered on Python Backend');
+    } else {
+      console.warn('⚠️ Backend received log but returned an error');
+    }
+  } catch (error) {
+    console.error('❌ Failed to connect to Python Backend (FastAPI). Ensure it is running on port 8000.');
+  }
+}
 
 export enum OperationType {
   CREATE = 'create',
@@ -57,7 +90,7 @@ function handleFirestoreError(error: unknown, operationType: OperationType, path
   throw new Error(JSON.stringify(errInfo));
 }
 
-// User Profile
+// --- USER PROFILE ---
 export async function getUserProfile(userId: string): Promise<UserProfile | null> {
   if (userId.startsWith('guest_')) return { id: userId, displayName: 'Guest Sister', joinedAt: new Date().toISOString() };
   const path = `users/${userId}`;
@@ -91,7 +124,7 @@ export async function updateUserProfile(userId: string, data: Partial<UserProfil
   }
 }
 
-// Health Logs
+// --- HEALTH LOGS (FIREBASE + FASTAPI BRIDGE) ---
 export async function getLogs(userId: string): Promise<HealthLog[]> {
   if (isGuestId(userId)) {
     return getGuestLogs();
@@ -99,10 +132,9 @@ export async function getLogs(userId: string): Promise<HealthLog[]> {
   if (!auth.currentUser) return [];
   const path = `users/${userId}/logs`;
   try {
-    const q = query(collection(db, path), limit(100)); // Remove orderBy to avoid index issues
+    const q = query(collection(db, path), limit(100));
     const snapshot = await getDocs(q);
     const logs = snapshot.docs.map(d => ({ id: d.id, ...d.data() } as HealthLog));
-    // Sort in memory
     return logs.sort((a, b) => b.date.localeCompare(a.date));
   } catch (error) {
     handleFirestoreError(error, OperationType.LIST, path);
@@ -116,25 +148,30 @@ export async function saveLog(userId: string, log: Omit<HealthLog, 'id' | 'creat
   try {
     const docRef = doc(db, path);
     const existingDoc = await getDoc(docRef);
+
+    // 1. Save to Firebase (Primary Storage)
     if (existingDoc.exists()) {
-      // Preserve createdAt on update
       const existingData = existingDoc.data();
-      await setDoc(docRef, { 
-        ...log, 
-        createdAt: existingData.createdAt 
+      await setDoc(docRef, {
+        ...log,
+        createdAt: existingData.createdAt
       });
     } else {
-      await setDoc(docRef, { 
-        ...log, 
-        createdAt: serverTimestamp() 
+      await setDoc(docRef, {
+        ...log,
+        createdAt: serverTimestamp()
       });
     }
+
+    // 2. Trigger Python Backend (PCOD Risk Analysis)
+    await triggerBackendAnalysis(userId, log);
+
   } catch (error) {
     handleFirestoreError(error, OperationType.WRITE, path);
   }
 }
 
-// Learning Resources
+// --- LEARNING RESOURCES ---
 export async function getResources(): Promise<Resource[]> {
   if (!auth.currentUser && !localStorage.getItem('cura_guest_session')) return [];
   const path = 'resources';
@@ -148,7 +185,7 @@ export async function getResources(): Promise<Resource[]> {
   }
 }
 
-// Appointments
+// --- APPOINTMENTS ---
 export async function getAppointments(userId: string): Promise<Appointment[]> {
   if (isGuestId(userId)) return [];
   if (!auth.currentUser) return [];
@@ -186,14 +223,14 @@ export async function updateAppointmentStatus(appointmentId: string, status: 'co
   }
 }
 
-// Community Posts
+// --- COMMUNITY POSTS ---
 export async function getPosts(): Promise<Post[]> {
   const isLocalGuest = localStorage.getItem('cura_guest_session');
   if (auth.currentUser?.isAnonymous || (!auth.currentUser && isLocalGuest)) {
     return getGuestPosts();
   }
   if (!auth.currentUser) return [];
-  
+
   const path = 'posts';
   try {
     const q = query(collection(db, path), orderBy('createdAt', 'desc'), limit(50));

@@ -131,3 +131,12 @@ async def add_log_and_analyze(data: LogEntry):
 async def get_insights(uid: str):
     res = supabase.table("wellness_analytics").select("*").eq("user_id", uid).single().execute()
     return res.data
+
+# --- End of Routes ---
+
+if __name__ == "__main__":
+    import uvicorn
+    # "main:app" means: look in main.py for the FastAPI object named 'app'
+    # host="0.0.0.0" allows the server to be accessible on your local network
+    # reload=True automatically restarts the server when you save changes (great for dev)
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True) 
