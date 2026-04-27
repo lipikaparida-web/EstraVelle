@@ -5,13 +5,22 @@
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Playfair Display", ui-serif, Georgia, serif;
   
+  /* Legacy palette mapped to new dark theme where possible */
   --color-lavender: #CEB1E4;
   --color-soft-pink: #9E6B6B;
   --color-warm-beige: #FEDC8F;
-  --color-serenity-purple: #361C1C;
+  --color-serenity-purple: #c67e58;
   --color-cura-purple: #FC8B5D;
-  --color-tangerine: #FC8B5D;
+  --color-tangerine: #c67e58;
   --color-sunset: #FEDC8F;
+
+  /* Premium Dark Aesthetic Colors */
+  --color-brand-dark: #0f1122;
+  --color-card-dark: #161a2b;
+  --color-card-light: #1e243b;
+  --color-border-dark: #2A2F4C;
+  --color-accent-copper: #c67e58;
+  --color-accent-brown: #8a4f3b;
 
   --radius-vibrant: 32px;
   --radius-vibrant-sm: 24px;
@@ -21,32 +30,24 @@
 
 @layer base {
   body {
-    @apply bg-amber-50/30 text-slate-800 font-sans transition-colors duration-300;
-  }
-  
-  .dark body {
-    @apply bg-slate-950 text-slate-100;
+    @apply bg-brand-dark text-slate-200 font-sans transition-colors duration-300;
   }
 }
 
 .card-soft {
-  @apply bg-white rounded-[2.5rem] p-8 shadow-sm border border-soft-pink/10 transition-all duration-300;
-}
-
-.dark .card-soft {
-  @apply bg-slate-900 border-slate-800 shadow-none;
+  @apply bg-card-dark rounded-[2.5rem] p-8 shadow-xl border border-border-dark transition-all duration-300;
 }
 
 .glass {
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(22, 26, 43, 0.7);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(248, 200, 220, 0.4);
+  border: 1px solid rgba(42, 47, 76, 0.5);
 }
 
 .card-vibrant {
-  @apply bg-white rounded-vibrant p-8 shadow-sm border border-soft-pink/40 hover:shadow-md transition-all duration-300;
+  @apply bg-card-dark rounded-vibrant p-8 shadow-xl border border-border-dark hover:shadow-2xl transition-all duration-300;
 }
 
 .card-vibrant-sm {
-  @apply bg-white rounded-vibrant-sm p-5 shadow-sm border border-soft-pink/40 transition-all duration-300;
+  @apply bg-card-dark rounded-vibrant-sm p-5 shadow-lg border border-border-dark transition-all duration-300;
 }

@@ -32,12 +32,15 @@ except Exception as e:
 
 # --- DATA MODELS (The Gatekeepers) ---
 class LogEntry(BaseModel):
-    uid: str
-    mood: str
-    symptoms: list
-    flow: str
-    is_start: bool
-    notes: str
+    user_id: str
+    date: str
+    symptoms: list = []
+    cycle_length: int = 0
+    mood: str = "neutral"
+    flow: str = "medium"
+    is_period_start: bool = False
+    notes: str = ""
+
 
 class UserMessage(BaseModel):
     uid: str
@@ -103,19 +106,19 @@ async def wellness_guide(data: UserMessage):
 async def add_log_and_analyze(data: LogEntry):
     try:
         supabase.table("health_logs").insert({
-            "user_id": data.uid,
+            "user_id": data.user_id,
             "mood": data.mood,
             "symptoms": data.symptoms,
             "flow_intensity": data.flow,
-            "is_period_start": data.is_start,
+            "is_period_start": data.is_period_start,
             "notes": data.notes
         }).execute()
 
-        all_logs = supabase.table("health_logs").select("*").eq("user_id", data.uid).execute()
+        all_logs = supabase.table("health_logs").select("*").eq("user_id", data.user_id).execute()
         next_date, risk, avg_len = run_wellness_ml(all_logs.data)
 
         supabase.table("wellness_analytics").upsert({
-            "user_id": data.uid,
+            "user_id": data.user_id,
             "predicted_next_period": str(next_date) if next_date else None,
             "pcod_indicator_risk": risk,
             "avg_cycle_length": avg_len,

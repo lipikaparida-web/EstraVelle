@@ -67,7 +67,7 @@ export default function Profile() {
         <button 
           onClick={handleSave}
           disabled={isSaving || isGuest}
-          className="flex items-center justify-center gap-2 px-8 py-3.5 bg-serenity-purple text-white rounded-2xl font-bold shadow-lg shadow-purple-100 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:grayscale disabled:hover:scale-100"
+          className="flex items-center justify-center gap-2 px-8 py-3.5 bg-accent-brown text-white rounded-2xl font-bold shadow-lg hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:grayscale disabled:hover:scale-100"
         >
           {isSaving ? (
             <RefreshCcw size={20} className="animate-spin" />
@@ -79,23 +79,23 @@ export default function Profile() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Left Column: Avatar and Quick Info */}
         <div className="lg:col-span-4 space-y-6">
-          <div className="card-vibrant p-10 text-center space-y-6 bg-white/70 backdrop-blur-xl border-white shadow-2xl shadow-soft-pink/5">
+          <div className="card-vibrant p-10 text-center space-y-6 shadow-2xl">
             <div className="relative inline-block group">
-              <div className="absolute inset-0 bg-gradient-to-tr from-soft-pink/20 to-lavender/20 rounded-[3rem] blur-2xl group-hover:blur-3xl transition-all" />
+              <div className="absolute inset-0 bg-gradient-to-tr from-accent-copper/20 to-accent-brown/20 rounded-[3rem] blur-2xl group-hover:blur-3xl transition-all" />
               {user?.photoURL ? (
                 <img 
                   src={user.photoURL} 
                   alt="Avatar" 
-                  className="w-40 h-40 rounded-[3rem] object-cover border-4 border-white shadow-xl mx-auto relative z-10" 
+                  className="w-40 h-40 rounded-[3rem] object-cover border-4 border-card-dark shadow-xl mx-auto relative z-10" 
                 />
               ) : (
-                <div className="w-40 h-40 rounded-[3rem] bg-gradient-to-br from-lavender/10 to-soft-pink/10 flex items-center justify-center text-serenity-purple border-4 border-white shadow-xl mx-auto relative z-10">
+                <div className="w-40 h-40 rounded-[3rem] bg-gradient-to-br from-card-dark to-brand-dark flex items-center justify-center text-accent-copper border-4 border-border-dark shadow-xl mx-auto relative z-10">
                   <User size={80} />
                 </div>
               )}
               <button 
                 onClick={handleProfilePictureClick}
-                className="absolute -bottom-2 -right-2 p-4 bg-white text-serenity-purple rounded-2xl shadow-xl border border-soft-pink/10 hover:scale-110 active:scale-90 transition-all z-20"
+                className="absolute -bottom-2 -right-2 p-4 bg-brand-dark text-accent-copper rounded-2xl shadow-xl border border-border-dark hover:scale-110 active:scale-90 transition-all z-20"
               >
                 <Camera size={24} />
               </button>
@@ -125,13 +125,13 @@ export default function Profile() {
               <motion.div 
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="bg-amber-50/50 p-6 rounded-3xl text-left border border-amber-100/50"
+                className="bg-card-dark p-6 rounded-3xl text-left border border-border-dark shadow-xl"
               >
-                <p className="text-[10px] uppercase font-black tracking-widest text-amber-600 mb-2">Temporary Aura</p>
-                <p className="text-xs text-slate-600 italic leading-relaxed">Your healing data is currently floating. Sign in to ground it safely.</p>
+                <p className="text-[10px] uppercase font-black tracking-widest text-accent-copper mb-2">Temporary Aura</p>
+                <p className="text-xs text-slate-400 italic leading-relaxed">Your healing data is currently floating. Sign in to ground it safely.</p>
                 <button 
                   onClick={signInWithGoogle}
-                  className="w-full mt-4 py-3 bg-white text-amber-600 rounded-xl text-xs font-bold shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all border border-amber-100"
+                  className="w-full mt-4 py-3 bg-accent-copper text-white rounded-xl text-xs font-bold shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all"
                 >
                   Anchor Your Journey
                 </button>
@@ -144,9 +144,9 @@ export default function Profile() {
         <div className="lg:col-span-8 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Identity Card */}
-            <div className="card-soft p-8 bg-white/60 space-y-6 border-white/50 group hover:bg-white transition-colors duration-500">
-              <div className="flex items-center gap-3 text-serenity-purple">
-                <div className="p-2 bg-lavender/20 rounded-xl">
+            <div className="card-soft space-y-6 group hover:bg-card-light transition-colors duration-500">
+              <div className="flex items-center gap-3 text-slate-200">
+                <div className="p-2 bg-card-dark rounded-xl border border-border-dark">
                   <User size={18} />
                 </div>
                 <h4 className="font-serif font-bold italic text-lg">My Identity</h4>
@@ -160,12 +160,12 @@ export default function Profile() {
                     value={formData.displayName}
                     onChange={(e) => setFormData({ ...formData, displayName: e.target.value })}
                     placeholder="How should we call you?"
-                    className="w-full bg-white border-2 border-slate-50 rounded-2xl px-5 py-3.5 text-sm focus:outline-none focus:border-lavender/40 focus:ring-4 focus:ring-lavender/10 transition-all font-medium"
+                    className="w-full bg-brand-dark border border-border-dark rounded-2xl px-5 py-3.5 text-sm focus:outline-none focus:border-accent-copper focus:ring-1 focus:ring-accent-copper transition-all font-medium text-slate-200"
                   />
                 </div>
                 <div className="space-y-2 opacity-60">
                   <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Email (Immutable)</label>
-                  <div className="w-full bg-slate-50/50 border-2 border-slate-50 rounded-2xl px-5 py-3.5 text-sm text-slate-400 font-medium cursor-not-allowed italic">
+                  <div className="w-full bg-brand-dark/50 border border-border-dark rounded-2xl px-5 py-3.5 text-sm text-slate-400 font-medium cursor-not-allowed italic">
                     {user?.email || "No email linked"}
                   </div>
                 </div>
@@ -173,10 +173,10 @@ export default function Profile() {
             </div>
 
             {/* Rhythm Card */}
-            <div className="card-soft p-8 bg-white/60 space-y-6 border-white/50 group hover:bg-white transition-colors duration-500">
-              <div className="flex items-center gap-3 text-rose-400">
-                <div className="p-2 bg-rose-50 rounded-xl">
-                  <Heart size={18} />
+            <div className="card-soft space-y-6 group hover:bg-card-light transition-colors duration-500">
+              <div className="flex items-center gap-3 text-slate-200">
+                <div className="p-2 bg-card-dark rounded-xl border border-border-dark">
+                  <Heart size={18} className="text-red-400" />
                 </div>
                 <h4 className="font-serif font-bold italic text-lg">Hormonal Rhythm</h4>
               </div>
@@ -188,7 +188,7 @@ export default function Profile() {
                     type="date" 
                     value={formData.birthDate}
                     onChange={(e) => setFormData({ ...formData, birthDate: e.target.value })}
-                    className="w-full bg-white border-2 border-slate-50 rounded-2xl px-5 py-3.5 text-sm focus:outline-none focus:border-rose-100 focus:ring-4 focus:ring-rose-50 transition-all font-medium uppercase text-xs"
+                    className="w-full bg-brand-dark border border-border-dark rounded-2xl px-5 py-3.5 text-sm focus:outline-none focus:border-accent-copper focus:ring-1 focus:ring-accent-copper transition-all font-medium text-slate-200 uppercase text-xs"
                   />
                 </div>
                 <div className="space-y-2">
@@ -196,7 +196,7 @@ export default function Profile() {
                   <select 
                     value={formData.cycleLength}
                     onChange={(e) => setFormData({ ...formData, cycleLength: e.target.value })}
-                    className="w-full bg-white border-2 border-slate-50 rounded-2xl px-5 py-3.5 text-sm focus:outline-none focus:border-rose-100 focus:ring-4 focus:ring-rose-50 transition-all font-medium"
+                    className="w-full bg-brand-dark border border-border-dark rounded-2xl px-5 py-3.5 text-sm focus:outline-none focus:border-accent-copper focus:ring-1 focus:ring-accent-copper transition-all font-medium text-slate-200"
                   >
                     {[...Array(20)].map((_, i) => {
                       const val = 20 + i;
@@ -210,10 +210,10 @@ export default function Profile() {
           </div>
 
           {/* Intentions Card */}
-          <div className="card-soft p-8 bg-white/60 space-y-6 border-white/50 group hover:bg-white transition-colors duration-500">
-            <div className="flex items-center gap-3 text-emerald-500">
-              <div className="p-2 bg-emerald-50 rounded-xl">
-                <CheckCircle2 size={18} />
+          <div className="card-soft space-y-6 group hover:bg-card-light transition-colors duration-500">
+            <div className="flex items-center gap-3 text-slate-200">
+              <div className="p-2 bg-card-dark rounded-xl border border-border-dark">
+                <CheckCircle2 size={18} className="text-emerald-400" />
               </div>
               <h4 className="font-serif font-bold italic text-lg">Healing Intentions</h4>
             </div>
@@ -225,7 +225,7 @@ export default function Profile() {
                 value={formData.intentions}
                 onChange={(e) => setFormData({ ...formData, intentions: e.target.value })}
                 placeholder="E.g., I want to balance my energy, manage PCOD symptoms with grace, or simply understand my body's secret language..."
-                className="w-full bg-white border-2 border-slate-50 rounded-3xl px-6 py-4 text-sm focus:outline-none focus:border-emerald-100 focus:ring-4 focus:ring-emerald-50 transition-all placeholder:italic resize-none font-medium leading-loose"
+                className="w-full bg-brand-dark border border-border-dark rounded-3xl px-6 py-4 text-sm focus:outline-none focus:border-accent-copper focus:ring-1 focus:ring-accent-copper transition-all placeholder:italic resize-none font-medium leading-loose text-slate-200"
               />
             </div>
           </div>

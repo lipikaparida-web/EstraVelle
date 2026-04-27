@@ -21,7 +21,7 @@ import { getGuestLogs, getGuestPosts } from './guestData';
 const isGuestId = (uid: string) => uid.startsWith('guest_') || (auth.currentUser?.isAnonymous);
 
 // --- BACKEND BRIDGE CONFIGURATION ---
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 
 /**
  * Sends health data to the Python Backend for PCOD Risk Analysis
@@ -37,9 +37,11 @@ async function triggerBackendAnalysis(userId: string, log: any) {
         user_id: userId,
         date: log.date,
         symptoms: log.symptoms || [],
-        cycle_length: log.cycle_length || 0,
+        cycle_length: 0,
         mood: log.mood || 'neutral',
-        flow: log.flow || 'medium'
+        flow: log.flow || 'medium',
+        is_period_start: !!log.periodStart,
+        notes: log.notes || ''
       }),
     });
 

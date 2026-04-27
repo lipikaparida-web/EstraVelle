@@ -7,13 +7,21 @@ export default {
     theme: {
         extend: {
             colors: {
-                // Your New Sanctuary Palette
-                'plum-deep': '#1A0410',
-                'plum-wine': '#450920',
-                'rose-dusty': '#A6808C',
-                'mist-rose': '#F4EBEB',
-                'serenity-purple': '#450920',
-                'tangerine': '#A6808C',
+                // Premium Dark Palette
+                'brand-dark': '#0f1122',
+                'card-dark': '#161a2b',
+                'card-light': '#1e243b',
+                'border-dark': '#2A2F4C',
+                'accent-copper': '#c67e58',
+                'accent-brown': '#8a4f3b',
+                
+                // Legacy colors mapped to dark theme to prevent breakage
+                'plum-deep': '#0f1122',
+                'plum-wine': '#e2e8f0', // Slate-200 for readable text
+                'rose-dusty': '#2A2F4C', // Used for borders
+                'mist-rose': '#0f1122', // Main background
+                'serenity-purple': '#c67e58', // Primary accent
+                'tangerine': '#c67e58',
             },
         },
     },

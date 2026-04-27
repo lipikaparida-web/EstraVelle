@@ -48,18 +48,18 @@ export default function Layout({ children }: LayoutProps) {
   };
 
   return (
-    /* --- MASTER CONTAINER: REPLACED WHITE WITH MIST ROSE --- */
-    <div className="min-h-screen flex bg-mist-rose transition-colors duration-300 relative overflow-hidden font-sans">
+    /* --- MASTER CONTAINER: REPLACED WHITE WITH DARK BRAND --- */
+    <div className="min-h-screen flex bg-brand-dark transition-colors duration-300 relative overflow-hidden font-sans">
 
       {/* AMBIENT GLOWS: UPDATED TO NEW PALETTE */}
-      <div className="absolute top-[-10%] left-[-5%] w-[50%] h-[50%] rounded-full bg-rose-dusty blur-[120px] opacity-30 z-0 animate-pulse" />
-      <div className="absolute bottom-[5%] right-[-5%] w-[45%] h-[55%] rounded-full bg-[#E2D1D1] blur-[110px] opacity-40 z-0" />
+      <div className="absolute top-[-10%] left-[-5%] w-[50%] h-[50%] rounded-full bg-accent-brown blur-[120px] opacity-10 z-0 animate-pulse" />
+      <div className="absolute bottom-[5%] right-[-5%] w-[45%] h-[55%] rounded-full bg-[#1e243b] blur-[110px] opacity-30 z-0" />
 
-      {/* --- SIDEBAR: UPDATED TO PLUM WINE --- */}
-      <aside className="w-64 h-screen sticky top-0 hidden md:flex flex-col bg-white/40 backdrop-blur-2xl border-r border-rose-dusty/20 z-50 shadow-sm">
+      {/* --- SIDEBAR: UPDATED TO DARK NAVY --- */}
+      <aside className="w-64 h-screen sticky top-0 hidden md:flex flex-col bg-card-dark/80 backdrop-blur-2xl border-r border-border-dark z-50 shadow-sm">
         <div className="p-8 flex items-center gap-3">
           <Logo size={34} />
-          <span className="text-2xl font-serif font-bold italic text-plum-wine tracking-tight">
+          <span className="text-2xl font-serif font-bold italic text-slate-100 tracking-tight">
             EstraVelle
           </span>
         </div>
@@ -80,7 +80,7 @@ export default function Layout({ children }: LayoutProps) {
         <div className="p-6 mt-auto border-t border-rose-dusty/10">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-3 text-[11px] font-black uppercase tracking-[0.2em] text-plum-wine/60 hover:text-plum-wine hover:bg-white/40 rounded-2xl transition-all duration-300"
+            className="w-full flex items-center gap-3 px-4 py-3 text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 hover:text-white hover:bg-white/5 rounded-2xl transition-all duration-300"
           >
             <LogOut size={18} />
             Logout
@@ -93,24 +93,24 @@ export default function Layout({ children }: LayoutProps) {
 
         {/* --- FLOATING HEADER PILL --- */}
         <header className="w-full px-10 py-8 flex justify-end items-center bg-transparent sticky top-0 z-40">
-          <div className="flex items-center gap-6 bg-white/40 backdrop-blur-xl px-7 py-2.5 rounded-full border border-white/60 shadow-lg shadow-plum-wine/5">
+          <div className="flex items-center gap-6 bg-card-dark/80 backdrop-blur-xl px-7 py-2.5 rounded-full border border-border-dark shadow-lg shadow-black/20">
 
             <div className="flex items-center gap-2 relative group">
-              <Languages size={18} className="text-plum-wine/40 group-hover:text-plum-wine transition-colors" />
+              <Languages size={18} className="text-slate-400 group-hover:text-slate-200 transition-colors" />
               <select
                 value={i18n.language}
                 onChange={(e) => changeLanguage(e.target.value)}
-                className="appearance-none bg-transparent text-[10px] font-black uppercase tracking-[0.15em] text-plum-wine/60 hover:text-plum-wine focus:outline-none cursor-pointer pr-4"
+                className="appearance-none bg-transparent text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 hover:text-slate-200 focus:outline-none cursor-pointer pr-4"
               >
                 {LANGUAGES.map(lang => (
-                  <option key={lang.code} value={lang.code} className="bg-mist-rose text-plum-deep">{lang.name}</option>
+                  <option key={lang.code} value={lang.code} className="bg-card-dark text-slate-200">{lang.name}</option>
                 ))}
               </select>
             </div>
 
             <NavLink
               to="/logs"
-              className="px-6 py-2 rounded-full bg-rose-dusty text-white text-[10px] font-black uppercase tracking-[0.15em] hover:scale-[1.05] hover:shadow-lg hover:shadow-rose-dusty/30 transition-all duration-300"
+              className="px-6 py-2 rounded-full bg-accent-copper text-white text-[10px] font-black uppercase tracking-[0.15em] hover:scale-[1.05] hover:shadow-lg hover:shadow-accent-copper/30 transition-all duration-300"
             >
               {t('nav.logs')}
             </NavLink>
@@ -135,7 +135,7 @@ export default function Layout({ children }: LayoutProps) {
       </div>
 
       {/* --- MOBILE NAVIGATION --- */}
-      <nav className="md:hidden fixed bottom-4 left-4 right-4 h-16 bg-white/80 backdrop-blur-xl border border-white/40 rounded-3xl shadow-2xl flex justify-around items-center px-4 z-50">
+      <nav className="md:hidden fixed bottom-4 left-4 right-4 h-16 bg-card-dark/90 backdrop-blur-xl border border-border-dark rounded-3xl shadow-2xl flex justify-around items-center px-4 z-50">
         <MobileIconNavItem to="/" icon={<LayoutDashboard size={22} />} />
         <MobileIconNavItem to="/logs" icon={<CalendarDays size={22} />} />
         <MobileIconNavItem to="/assistant" icon={<Sparkles size={22} />} />
@@ -152,20 +152,20 @@ function SideNavItem({ to, icon, label }: { to: string, icon: React.ReactNode, l
       className={({ isActive }) => cn(
         "flex items-center gap-4 px-5 py-3.5 rounded-[22px] transition-all duration-500 group relative",
         isActive
-          ? "bg-white/80 text-plum-wine shadow-md shadow-plum-wine/5 border border-white/60"
-          : "text-plum-wine/40 hover:bg-white/40 hover:text-plum-wine"
+          ? "bg-white/10 text-slate-100 shadow-md shadow-black/10 border border-white/5"
+          : "text-slate-500 hover:bg-white/5 hover:text-slate-300"
       )}
     >
       {({ isActive }) => (
         <>
-          <div className={cn("transition-all duration-300", isActive ? "scale-110 text-plum-wine" : "group-hover:text-plum-wine")}>
+          <div className={cn("transition-all duration-300", isActive ? "scale-110 text-slate-100" : "group-hover:text-slate-300")}>
             {icon}
           </div>
           <span className={cn("text-[10px] font-black uppercase tracking-[0.2em] transition-all", isActive ? "opacity-100" : "opacity-60")}>
             {label}
           </span>
           {isActive && (
-            <div className="ml-auto w-1.5 h-1.5 bg-rose-dusty rounded-full shadow-[0_0_10px_#A6808C]" />
+            <div className="ml-auto w-1.5 h-1.5 bg-accent-copper rounded-full shadow-[0_0_10px_#c67e58]" />
           )}
         </>
       )}
@@ -179,7 +179,7 @@ function MobileIconNavItem({ to, icon }: { to: string, icon: React.ReactNode }) 
       to={to}
       className={({ isActive }) => cn(
         "p-3 rounded-2xl transition-all duration-300",
-        isActive ? "text-plum-wine bg-plum-wine/10 scale-110" : "text-plum-wine/30"
+        isActive ? "text-slate-100 bg-white/10 scale-110" : "text-slate-500"
       )}
     >
       {icon}

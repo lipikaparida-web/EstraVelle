@@ -264,8 +264,8 @@ export default function Dashboard() {
                     className={cn(
                       "px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all",
                       timeRange === range
-                        ? "bg-white dark:bg-slate-700 text-serenity-purple shadow-sm"
-                        : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+                        ? "bg-card-dark text-slate-100 shadow-sm border border-white/5"
+                        : "text-slate-500 hover:text-slate-300"
                     )}
                   >
                     {range === 'all' ? 'Historical' : `Last ${range === 'week' ? '7 Days' : '30 Days'}`}
@@ -289,11 +289,11 @@ export default function Dashboard() {
                       if (active && payload && payload.length) {
                         const data = payload[0].payload;
                         return (
-                          <div className="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-xl border border-soft-pink/10 dark:border-slate-700 space-y-2">
+                          <div className="bg-card-dark p-4 rounded-2xl shadow-xl border border-border-dark space-y-2">
                             <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{data.fullDate}</p>
                             <div className="flex items-center gap-2">
                               <div className="w-2 h-2 rounded-full bg-tangerine" />
-                              <p className="text-xs font-bold text-slate-700 dark:text-slate-200">Mood: <span className="capitalize text-serenity-purple dark:text-lavender">{data.moodLabel}</span></p>
+                              <p className="text-xs font-bold text-slate-200">Mood: <span className="capitalize text-accent-copper">{data.moodLabel}</span></p>
                             </div>
                             {data.symptoms !== 'None' && (
                               <div className="flex items-start gap-2 max-w-[150px]">
@@ -320,7 +320,7 @@ export default function Dashboard() {
         </div>
 
         {/* Symptom Frequency Bar Chart */}
-        <div className="lg:col-span-12 card-vibrant bg-white dark:bg-slate-900 shadow-sm border border-soft-pink/20 dark:border-slate-800">
+        <div className="lg:col-span-12 card-vibrant">
           <div className="flex items-center justify-between mb-8">
             <div className="space-y-1">
               <h3 className="text-2xl font-serif font-bold text-slate-700 dark:text-slate-200 italic flex items-center gap-2">
@@ -350,8 +350,8 @@ export default function Dashboard() {
                     content={({ active, payload }) => {
                       if (active && payload && payload.length) {
                         return (
-                          <div className="bg-white dark:bg-slate-800 px-3 py-2 rounded-xl shadow-lg border border-soft-pink/10 dark:border-slate-700">
-                            <p className="text-sm font-bold text-slate-700 dark:text-slate-200">
+                          <div className="bg-card-dark px-3 py-2 rounded-xl shadow-lg border border-border-dark">
+                            <p className="text-sm font-bold text-slate-200">
                               {payload[0].payload.symptom}: <span className="text-tangerine">{payload[0].value} times</span>
                             </p>
                           </div>
@@ -381,7 +381,7 @@ export default function Dashboard() {
 
         {/* Right Sidebar: Cycle Visualization */}
         <div className="lg:col-span-4 flex flex-col gap-6">
-          <div className="bg-white dark:bg-slate-900 rounded-vibrant p-1 space-y-1 shadow-xl border border-soft-pink/10 dark:border-slate-800 overflow-hidden h-full flex flex-col">
+          <div className="card-vibrant p-1 space-y-1 overflow-hidden h-full flex flex-col">
             <div className={cn(
               "rounded-[1.75rem] p-8 text-white relative overflow-hidden flex-1 flex flex-col justify-between transition-all duration-700 bg-gradient-to-br",
               phase.gradient
@@ -475,10 +475,10 @@ export default function Dashboard() {
 
               <Link
                 to="/wellness"
-                className="flex items-center justify-between w-full p-4 bg-lavender/10 hover:bg-lavender/20 dark:bg-slate-800 dark:hover:bg-slate-700 border border-lavender/20 dark:border-slate-700 rounded-2xl transition-all group"
+                className="flex items-center justify-between w-full p-4 bg-brand-dark/50 hover:bg-card-light border border-border-dark rounded-2xl transition-all group"
               >
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-white dark:bg-slate-900 rounded-lg group-hover:scale-110 transition-transform shadow-sm">
+                  <div className="p-2 bg-card-dark border border-white/5 rounded-lg group-hover:scale-110 transition-transform shadow-sm">
                     <Sparkles size={16} className="text-serenity-purple" />
                   </div>
                   <span className="text-sm font-bold tracking-wide text-slate-700 dark:text-slate-200">View Wellness Rituals</span>
@@ -491,7 +491,7 @@ export default function Dashboard() {
       </div>
 
       {/* Smart Caution System */}
-      <div className="card-vibrant dark:bg-slate-900/60 dark:border-slate-800/50 bg-white/40 border-none relative overflow-hidden">
+      <div className="card-vibrant bg-card-dark/60 border-none relative overflow-hidden shadow-2xl">
         <div className="flex flex-col md:flex-row items-center gap-8 text-center md:text-left">
           <div className="w-20 h-20 bg-lavender/20 rounded-3xl flex items-center justify-center text-cura-purple shrink-0">
             <Sparkles size={36} />
@@ -509,7 +509,7 @@ export default function Dashboard() {
       </div>
 
       {/* Symptom Correlation Analysis */}
-      <div className="card-vibrant dark:bg-slate-900 dark:border-slate-800 bg-white shadow-sm border border-soft-pink/30">
+      <div className="card-vibrant">
         <div className="flex items-center justify-between mb-8">
           <div className="space-y-1">
             <h3 className="text-2xl font-serif font-bold text-slate-700 dark:text-slate-200 italic">Symptom Insights</h3>

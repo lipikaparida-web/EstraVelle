@@ -1,7 +1,6 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: "AIzaSyCNwWQ_i33xn1tTpyvPV28bjuEmcJ-CsEA" });
-
+const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
 
 const SYSTEM_INSTRUCTION = `You are "EstraVelle", a warm, empathetic virtual assistant doctor and health companion for women. You combine clinical knowledge with the heart of a supportive health coach. You specialize in hormonal health, PCOD/PCOS, and cycle-syncing.
 

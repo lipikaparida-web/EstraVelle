@@ -50,7 +50,7 @@ export default function Settings() {
           <button 
             onClick={handleRefresh}
             disabled={isRefreshing}
-            className="p-4 bg-white dark:bg-slate-900 text-slate-400 hover:text-serenity-purple border border-soft-pink/20 dark:border-slate-800 rounded-2xl shadow-sm transition-all flex items-center gap-2 group"
+            className="p-4 bg-card-dark text-slate-400 hover:text-slate-200 border border-border-dark rounded-2xl shadow-sm transition-all flex items-center gap-2 group"
           >
             <motion.div animate={isRefreshing ? { rotate: 360 } : {}} transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}>
               <RefreshCcw size={20} className={cn("transition-transform group-active:rotate-180")} />
@@ -67,7 +67,7 @@ export default function Settings() {
             onClick={() => setActiveTab('general')}
             className={cn(
               "w-full flex items-center gap-3 px-6 py-4 rounded-2xl font-bold uppercase tracking-widest text-xs transition-all",
-              activeTab === 'general' ? "bg-serenity-purple text-white shadow-lg shadow-purple-100" : "text-slate-400 hover:bg-white dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-200"
+              activeTab === 'general' ? "bg-accent-brown text-white shadow-lg shadow-black/20" : "text-slate-400 hover:bg-card-dark hover:text-slate-200"
             )}
           >
             <Smartphone size={18} />
@@ -77,7 +77,7 @@ export default function Settings() {
             onClick={() => setActiveTab('notifications')}
             className={cn(
               "w-full flex items-center gap-3 px-6 py-4 rounded-2xl font-bold uppercase tracking-widest text-xs transition-all",
-              activeTab === 'notifications' ? "bg-serenity-purple text-white shadow-lg shadow-purple-100" : "text-slate-400 hover:bg-white dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-200"
+              activeTab === 'notifications' ? "bg-accent-brown text-white shadow-lg shadow-black/20" : "text-slate-400 hover:bg-card-dark hover:text-slate-200"
             )}
           >
             <Bell size={18} />
@@ -87,7 +87,7 @@ export default function Settings() {
             onClick={() => setActiveTab('privacy')}
             className={cn(
               "w-full flex items-center gap-3 px-6 py-4 rounded-2xl font-bold uppercase tracking-widest text-xs transition-all",
-              activeTab === 'privacy' ? "bg-serenity-purple text-white shadow-lg shadow-purple-100" : "text-slate-400 hover:bg-white dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-200"
+              activeTab === 'privacy' ? "bg-accent-brown text-white shadow-lg shadow-black/20" : "text-slate-400 hover:bg-card-dark hover:text-slate-200"
             )}
           >
             <Shield size={18} />
@@ -119,7 +119,7 @@ export default function Settings() {
               initial={{ opacity: 0, x: 10 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -10 }}
-              className="card-soft p-8 bg-white/40 dark:bg-slate-900/40 border border-soft-pink/10 dark:border-slate-800/50 space-y-10"
+              className="card-soft space-y-10"
             >
               {activeTab === 'general' && (
                 <div className="space-y-8">
@@ -205,19 +205,19 @@ export default function Settings() {
 
                     <div className="space-y-3">
                       {reminders.map(r => (
-                        <div key={r.id} className="flex items-center justify-between p-4 bg-white/60 dark:bg-slate-900/60 border border-soft-pink/10 rounded-2xl group transition-all hover:border-soft-pink/30">
+                        <div key={r.id} className="flex items-center justify-between p-4 bg-brand-dark/50 border border-border-dark rounded-2xl group transition-all hover:border-slate-700">
                           <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 rounded-full bg-soft-pink/10 flex items-center justify-center text-soft-pink">
+                            <div className="w-10 h-10 rounded-full bg-card-dark flex items-center justify-center text-accent-copper">
                               <Clock size={16} />
                             </div>
                             <div>
-                              <p className="text-sm font-medium text-slate-700 dark:text-slate-200">{r.text}</p>
+                              <p className="text-sm font-medium text-slate-200">{r.text}</p>
                               <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{r.frequency}</p>
                             </div>
                           </div>
                           <button 
                             onClick={() => setReminders(prev => prev.filter(item => item.id !== r.id))}
-                            className="p-2 text-slate-300 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100"
+                            className="p-2 text-slate-500 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100"
                           >
                             <X size={16} />
                           </button>
@@ -225,7 +225,7 @@ export default function Settings() {
                       ))}
                     </div>
 
-                    <div className="flex gap-4 items-end bg-lavender/5 p-6 rounded-3xl border border-lavender/10">
+                    <div className="flex gap-4 items-end bg-card-dark p-6 rounded-3xl border border-border-dark">
                       <div className="flex-1 space-y-2">
                         <label className="text-[10px] uppercase tracking-widest font-bold text-slate-400 block ml-1">New Ritual Reminder</label>
                         <input 
@@ -233,7 +233,7 @@ export default function Settings() {
                           placeholder="e.g., Afternoon tea break"
                           value={newReminder}
                           onChange={(e) => setNewReminder(e.target.value)}
-                          className="w-full bg-white dark:bg-slate-900 border border-lavender/20 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-lavender/30 transition-all dark:text-slate-200"
+                          className="w-full bg-brand-dark border border-border-dark rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent-copper/30 transition-all text-slate-200"
                         />
                       </div>
                       <div className="w-32 space-y-2">
@@ -241,7 +241,7 @@ export default function Settings() {
                         <select 
                           value={newFreq}
                           onChange={(e) => setNewFreq(e.target.value as 'daily' | 'weekly')}
-                          className="w-full bg-white dark:bg-slate-900 border border-lavender/20 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-lavender/30 transition-all dark:text-slate-200"
+                          className="w-full bg-brand-dark border border-border-dark rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent-copper/30 transition-all text-slate-200"
                         >
                           <option value="daily">Daily</option>
                           <option value="weekly">Weekly</option>
@@ -254,7 +254,7 @@ export default function Settings() {
                             setNewReminder('');
                           }
                         }}
-                        className="p-2.5 bg-serenity-purple text-white rounded-xl hover:shadow-lg transition-all"
+                        className="p-2.5 bg-accent-copper text-white rounded-xl hover:shadow-lg transition-all"
                       >
                         <Plus size={20} />
                       </button>
@@ -348,12 +348,12 @@ export default function Settings() {
             </motion.div>
           </AnimatePresence>
 
-          <div className="card-vibrant p-10 bg-gradient-to-br from-serenity-purple to-cura-purple text-white space-y-6 flex flex-col md:flex-row items-center gap-8">
+          <div className="card-vibrant p-10 bg-gradient-to-br from-[#5c3121] to-[#b36a49] text-white space-y-6 flex flex-col md:flex-row items-center gap-8 shadow-2xl shadow-black/40 border-none">
             <div className="flex-1 space-y-2">
-              <h4 className="text-2xl font-serif font-bold italic">Deep Data Export</h4>
+              <h4 className="text-2xl font-serif font-bold italic text-white">Deep Data Export</h4>
               <p className="text-white/80 text-sm italic">Download your entire health history in PDF or CSV format for your healthcare provider. 💜</p>
             </div>
-            <button className="px-8 py-4 bg-white/10 hover:bg-white/20 border border-white/30 text-white rounded-2xl font-bold shadow-2xl transition-all whitespace-nowrap">
+            <button className="px-8 py-4 bg-black/20 hover:bg-black/30 backdrop-blur-md border border-white/20 text-white rounded-2xl font-bold shadow-xl transition-all whitespace-nowrap">
               Export My Data
             </button>
           </div>
@@ -375,9 +375,9 @@ function SettingItem({ label, description, type, options, active = false, value,
   const [enabled, setEnabled] = useState(active);
 
   return (
-    <div className="group p-4 rounded-3xl hover:bg-white/40 dark:hover:bg-slate-800/40 transition-colors border border-transparent hover:border-soft-pink/10">
+    <div className="group p-4 rounded-3xl hover:bg-card-dark transition-colors border border-transparent hover:border-border-dark">
       <div className="flex items-center justify-between mb-2">
-        <label className="text-sm font-bold text-slate-600 dark:text-slate-300">{label}</label>
+        <label className="text-sm font-bold text-slate-300">{label}</label>
         {type === 'toggle' && (
           <button 
             onClick={() => {
@@ -387,7 +387,7 @@ function SettingItem({ label, description, type, options, active = false, value,
             }}
             className={cn(
               "w-12 h-6 rounded-full relative p-1 transition-all duration-300",
-              (value !== undefined ? value : enabled) ? "bg-serenity-purple" : "bg-lavender/30"
+              (value !== undefined ? value : enabled) ? "bg-accent-copper" : "bg-slate-700"
             )}
           >
             <div className={cn(
@@ -397,13 +397,13 @@ function SettingItem({ label, description, type, options, active = false, value,
           </button>
         )}
       </div>
-      <p className="text-xs text-slate-400 dark:text-slate-500 leading-relaxed italic mb-3">{description}</p>
+      <p className="text-xs text-slate-500 leading-relaxed italic mb-3">{description}</p>
       
       {type === 'select' && (
         <select 
           value={value}
           onChange={(e) => onChange?.(e.target.value)}
-          className="w-full bg-white/60 dark:bg-slate-900/60 border border-soft-pink/20 rounded-xl px-4 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-lavender transition-all dark:text-slate-300"
+          className="w-full bg-brand-dark border border-border-dark rounded-xl px-4 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-accent-copper transition-all text-slate-300"
         >
           {options?.map(opt => <option key={opt}>{opt}</option>)}
         </select>
